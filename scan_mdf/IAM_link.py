@@ -8,13 +8,3 @@ import struct
 
 def iam_unload(data):
     a = 0
-
-
-
-
-
-
-
-
-
-

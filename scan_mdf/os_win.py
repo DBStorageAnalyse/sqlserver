@@ -3,6 +3,7 @@
 import wmi
 import time
 
+
 class DISK:
     def __init__(self):
         self.device_id = ''
@@ -10,6 +11,7 @@ class DISK:
         self.disk_caption = ''
         self.disk_size = 0
         self.partitions = []
+
 
 class Partition:
     def __init__(self):
@@ -21,30 +23,33 @@ class Partition:
         self.partition_used = 0
         self.partition_used_Per = 0
 
+
 class os_info():
-    def sys_version(self):  #获取操作系统版本
-        c = wmi.WMI (); os_1 = ''
+    def sys_version(self):  # 获取操作系统版本
+        c = wmi.WMI();
+        os_1 = ''
         for sys in c.Win32_OperatingSystem():
-            os_1 = "OS: %s, Bits: %s\n"%(sys.Caption,sys.OSArchitecture)
-         #   print(os_1)     #系统版本和位数
-         #   print("Processes Num: %d"%sys.NumberOfProcesses)        #当前系统运行的进程总数
+            os_1 = "OS: %s, Bits: %s\n" % (sys.Caption, sys.OSArchitecture)
+        #   print(os_1)     #系统版本和位数
+        #   print("Processes Num: %d"%sys.NumberOfProcesses)        #当前系统运行的进程总数
         return os_1
 
-    def cpu_mem(self):  #CPU类型和内存
-        c = wmi.WMI ()
-        s_1 = '';s_m = 0
+    def cpu_mem(self):  # CPU类型和内存
+        c = wmi.WMI()
+        s_1 = '';
+        s_m = 0
         for processor in c.Win32_Processor():
-            s_1 += "%s: %s\n"%(processor.DeviceID,processor.Name.strip())
+            s_1 += "%s: %s\n" % (processor.DeviceID, processor.Name.strip())
         #    print("%s: %s"%(processor.DeviceID,processor.Name.strip()))
         for Memory in c.Win32_PhysicalMemory():
-       #     print("Memory : %.fGB" %(int(Memory.Capacity)/1073741824))
-            s_m += int(Memory.Capacity)/1073741824
-        s_2 = "Memory: %.fGB\n" %(s_m)
+            #     print("Memory : %.fGB" %(int(Memory.Capacity)/1073741824))
+            s_m += int(Memory.Capacity) / 1073741824
+        s_2 = "Memory: %.fGB\n" % (s_m)
         cpu_1 = s_1 + s_2
         return cpu_1
 
     def cpu_use(self):
-        #5s取一次CPU的使用率
+        # 5s取一次CPU的使用率
         c = wmi.WMI()
         while True:
             for cpu in c.Win32_Processor():
@@ -53,16 +58,16 @@ class os_info():
                 time.sleep(5)
 
     def disk(self):
-        c = wmi.WMI ()
-        disk_info= []
-        #获取硬盘分区
+        c = wmi.WMI()
+        disk_info = []
+        # 获取硬盘分区
 
-        for physical_disk in c.Win32_DiskDrive ():
+        for physical_disk in c.Win32_DiskDrive():
             disk1 = DISK()
             disk1.device_id = physical_disk.DeviceID
             disk1.disk_caption = physical_disk.Caption
             disk1.disk_size = int(physical_disk.Size)
-            print(physical_disk.Caption,physical_disk.DeviceID,disk1.disk_size)  # 物理磁盘信息
+            print(physical_disk.Caption, physical_disk.DeviceID, disk1.disk_size)  # 物理磁盘信息
 
             # for partition in physical_disk.associators ("Win32_DiskDriveToDiskPartition"):
             #     for logical_disk in partition.associators ("Win32_LogicalDiskToPartition"):
@@ -86,24 +91,23 @@ class os_info():
         return disk_info
 
     def network(self):
-        c = wmi.WMI ()
-        #获取MAC和IP地址
-        for interface in c.Win32_NetworkAdapterConfiguration (IPEnabled=1):
+        c = wmi.WMI()
+        # 获取MAC和IP地址
+        for interface in c.Win32_NetworkAdapterConfiguration(IPEnabled=1):
             print("MAC: %s" % interface.MACAddress)
         for ip_address in interface.IPAddress:
             print("ip_add: %s" % ip_address)
         print
 
     def Process(self):
-        c = wmi.WMI ()
-        #获取自启动程序的位置
-        for s in c.Win32_StartupCommand ():
+        c = wmi.WMI()
+        # 获取自启动程序的位置
+        for s in c.Win32_StartupCommand():
             print("[%s] %s <%s>" % (s.Location, s.Caption, s.Command))
 
-        #获取当前运行的进程
-        for process in c.Win32_Process ():
+        # 获取当前运行的进程
+        for process in c.Win32_Process():
             print(process.ProcessId, process.Name)
-
 
 
 def main():
@@ -112,6 +116,5 @@ def main():
     os.cpu_mem()
     os.disk()
     os.network()
-   # os.cpu_use()
-    #Process()
-
+# os.cpu_use()
+# Process()
